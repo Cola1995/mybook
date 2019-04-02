@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>作者页面</title>
+</head>
+<body>
+<a href="/add_author/">添加作者</a>
+<table border="1">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>id</th>
+        <th>姓名</th>
+        <th>作品</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for foo in author_list_obj %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ foo.id }}</td>
+        <td>{{ foo.name }}</td>
+        <td>{% for book in foo.book.all %}
+         {{ book.title }}
+        {% endfor %}
+         </td>
+      <td><a href="/del_author/?id={{ foo.id }}">删除</a><a href="/edit_author/?id={{ foo.id }}">编辑</a></td>
+    </tr>
+    {% endfor %}
+
+
+    </tbody>
+</table>
+</body>
+</html>

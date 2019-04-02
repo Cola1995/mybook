@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>编辑书籍</title>
+</head>
+<body>
+<form action="/edit_book/" method="post">
+    id: <input type="text" name="id" value="{{ book_obj.id }}" readonly="readonly">
+    书名：<input type="text" name="bookname" value="{{ book_obj.title }}">
+    <select name="pl" >
+        {% for foo in pl_obj %}
+            {% if book_obj.p_id == foo.id %}
+                <option selected value="{{ foo.id }}">{{ foo.plisher }}</option>
+            {% else %}
+               <option value="{{ foo.id }}">{{ foo.plisher }}</option>
+            {% endif %}
+        {% endfor %}
+
+    </select>
+    <input type="submit" value="提交">
+</form>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加时书籍</title>
+</head>
+<body>
+<form action="/add_book/" method="post">
+    书名:<input type="text" name="book_name" >
+    出版社: <select name="plisherq">
+            {% for plisher in plisher_list %}
+                <option value="{{ plisher.id }}">{{ plisher.plisher }}</option>
+            {% endfor %}
+
+            </select>
+    <input type="submit" value="提交">
+</form>
+</body>
+</html>
