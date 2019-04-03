@@ -22,8 +22,8 @@ urlpatterns = [
     # url(r'^admin/', admin.site.urls),
     url(r'^plisher_list/', views.plisher_list),
     url(r'^add_plisher/', views.add_plisher),
-    # url(r'^delete_plisher/', views.delete_plisher),
-    url(r'^delete_plisher/([0-9]+)', views.delete_plisher2),
+    url(r'^delete_plisher/', views.delete_plisher),
+    # url(r'^delete_plisher/([0-9]+)', views.delete_plisher2),
     url(r'^edit_plisher/', views.edit_plisher),
 
     #book路径
@@ -47,7 +47,8 @@ urlpatterns = [
     # url(r'^title/(?P<year>[0-9]{2,4})/(?P<month>[a-zA-Z]{2})/$', views.title),
     # url(r'^title/(?P<year>[0-9]+)/(?P<month>[a-zA-Z]+)/$', views.title),
 
-    url(r'^app01',include(urls))  #路由分发给app_01  /app_01/home/
+    url(r'^app01',include(urls)), #路由分发给app_01  /app_01/home/
+    url(r'^trans/', views.trans),
 
 
 

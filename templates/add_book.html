@@ -9,7 +9,7 @@
     书名:<input type="text" name="book_name" >
     出版社: <select name="plisherq">
             {% for plisher in plisher_list %}
-                <option value="{{ plisher.id }}">{{ plisher.plisher }}</option>
+                <option value="{{ plisher.id }}">{{ plisher.name }}</option>
             {% endfor %}
 
             </select>

@@ -14,7 +14,7 @@ class Plisher(models.Model):
 class Book(models.Model):
     id=models.AutoField(primary_key=True)
     title = models.CharField(max_length=50,null=False,unique=True)
-    price = models.DecimalField(max_digits=5, decimal_places=2)
+    price = models.DecimalField(max_digits=5, decimal_places=2,default=99.9)
     p = models.ForeignKey(to="Plisher",on_delete=models.SET_NULL,null=True)   #创建外键
     #related_name 反向查找
     def __str__(self):

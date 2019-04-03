@@ -72,7 +72,7 @@
     <div class="col-md-2">
         <div style="height: 800px;background: rgb(245,245,245);">
             <div class="list-group">
-                <a href="/plisher_list/" class="list-group-item ">出版社列表</a>
+                <a href="/plisher_list/?page=1" class="list-group-item ">出版社列表</a>
                 <a href="/book_list/" class="list-group-item active">书籍列表</a>
                 <a href="/author_list/" class="list-group-item">作者信息</a>
 {#                <a href="#" class="list-group-item">Porta ac consectetur ac</a>#}
@@ -129,7 +129,7 @@
                                 <tr>
                                     <td>{{ book.id }}</td>
                                     <td>{{ book.title }}</td>
-                                    <td>{{ book.p.plisher }}</td>  <!--外键取值为对象-->
+                                    <td>{{ book.p.name }}</td>  <!--外键取值为对象-->
                                     <td>{{ book.price }}</td>
                                     <td><a class="btn btn-success" href="/edit_book/?id={{ book.id }}">编辑</a></td>
                                 </tr>
