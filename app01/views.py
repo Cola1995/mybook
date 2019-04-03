@@ -107,8 +107,18 @@ def book_list(request):
     :param request:
     :return:
     '''
-    ret = models.Book.objects.all()
-    return render(request, "book_list.html", {'book_list': ret})
+    page_num = request.GET.get("page")
+    total_count = models.Book.objects.all().count()
+    from utils import mypage
+    page_obj = mypage.Page(page_num,total_count,'/book_list/',10,11)
+
+    ret = models.Book.objects.all()[page_obj.start:page_obj.end]
+    # print(ret)
+
+    page_html = page_obj.page_html()
+    return render(request, "book_list.html", {"book_list": ret, "page_html": page_html})
+    # ret = models.Book.objects.all()
+    # return render(request, "book_list.html", {'book_list': ret})
 
 
 def add_book(request):
@@ -155,9 +165,19 @@ def author_list(request):
     :return:
     '''
 
-    author_list_obj = models.Author.objects.all()
-    # models.Author.objects.get(id=1).book.all()   author id为1 出品所有的书籍
-    return render(request,'author_list.html',{"author_list_obj":author_list_obj})
+    # author_list_obj = models.Author.objects.all()
+    # # models.Author.objects.get(id=1).book.all()   author id为1 出品所有的书籍
+    # return render(request,'author_list.html',{"author_list_obj":author_list_obj})
+    page_num = request.GET.get("page")
+    total_count = models.Author.objects.all().count()
+    from utils import mypage
+    page_obj = mypage.Page(page_num, total_count, '/author_list/', 10, 7)
+
+    ret = models.Author.objects.all()[page_obj.start:page_obj.end]
+    # print(ret)
+
+    page_html = page_obj.page_html()
+    return render(request, "author_list.html", {"author_list_obj": ret, "page_html": page_html})
 
 def add_author(request):
     '''
