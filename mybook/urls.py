@@ -49,6 +49,9 @@ urlpatterns = [
 
     url(r'^app01',include(urls)), #路由分发给app_01  /app_01/home/
     url(r'^trans/', views.trans),
+    url(r'^login/', views.login),
+    url(r'^logout/', views.logout),
+    url(r'^index/', views.index),
 
 
 

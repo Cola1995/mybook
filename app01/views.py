@@ -3,8 +3,27 @@ from app01 import models
 
 
 # Create your views here.
+def check_login(func):
+    """
+    # session登录装饰器
+    :param func:
+    :return:
+    """
+    def inner(request, *args, **kwargs):
+        if request.session.get('is_login') == '1':  # 检测session登录成功
+            return func(request,*args, **kwargs)
+        else:                  # 如果session 未验证成功记录当前路径
+            # 获取当前url
+            next_url = request.path_info
+            # print(next_url)
+            return redirect("/login/?next={}".format(next_url))
+            # return redirect('/login/')
+    return inner
 
 # 展示所有出版社页面
+
+
+@check_login
 def plisher_list(request):
 
     try:  #捕获传入页数为其他字符的情况
@@ -57,7 +76,7 @@ def plisher_list(request):
     html_list.append('<li><a href="/plisher_list/?page={}" aria-label="Previous">尾页</span></a></li>'.format(a))
     html_list = ''.join(html_list)  # 将html列表转成字符串
     # print(html_list)
-    return render(request, "plisher_list.html", {'plisher_list': ret,"html_list":html_list})
+    return render(request, "plisher_list.html", {'plisher_list': ret, "html_list":html_list})
 
 
 def add_plisher(request):
@@ -100,13 +119,14 @@ def edit_plisher(request):
     edit_object = models.Plisher.objects.get(id=edit_id)
     return render(request, 'edit_plisher.html', {"plisher": edit_object})
 
-
+@check_login
 def book_list(request):
-    '''
+    """
     #book列表页
     :param request:
     :return:
-    '''
+    """
+
     page_num = request.GET.get("page")
     total_count = models.Book.objects.all().count()
     from utils import mypage
@@ -117,6 +137,7 @@ def book_list(request):
 
     page_html = page_obj.page_html()
     return render(request, "book_list.html", {"book_list": ret, "page_html": page_html})
+
     # ret = models.Book.objects.all()
     # return render(request, "book_list.html", {'book_list': ret})
 
@@ -157,7 +178,7 @@ def edit_book(request):
     all_pl_obj = models.Plisher.objects.all()
     return render(request, 'edit_book.html', {"book_obj": ret, "pl_obj": all_pl_obj})
 
-
+@check_login
 def author_list(request):
     '''
     #作者列表
@@ -260,9 +281,54 @@ def title(request,year,month):
     print("月：%s"%month)
     return HttpResponse("ok")
 
+
 def home(request):
     return render(request, 'car/home.html')
 
-def trans(request):
-    return  render(request,'trans.html')
 
+def trans(request):
+    return render(request,'trans.html')
+
+
+
+
+
+def login(request):
+    """
+    #登录
+    :param request:
+    :return:
+    """
+    # print(request.get_full_path())
+
+    if request.method=="POST":
+        user = request.POST.get('user')
+        password = request.POST.get('password')
+        next_url = request.GET.get('next')
+        ret = models.User.objects.filter(user=user,password=password)
+        # print(user, password, ret, next_url)
+        if ret:
+            request.session['is_login'] = '1'  # 记录session
+            request.session['user'] = user
+            request.session.set_expiry(60)    # 设置session 失效时间
+            if next_url:
+                return redirect(next_url)
+            else:
+
+                return redirect('/book_list/')
+    return render(request, 'login.html')
+
+
+@check_login
+def index(request):
+    return render(request, 'index.html')
+
+
+def logout(request):
+    """
+    # 注销登录，即删除session
+    :param request:
+    :return:
+    """
+    request.session.flush()  # 删除当前的会话数据并删除会话的Cookie
+    return redirect('/login/')

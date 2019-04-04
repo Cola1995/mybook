@@ -27,7 +27,7 @@ class Author(models.Model):
     book = models.ManyToManyField(to="Book")
 
 
-#person
+# person
 class Person(models.Model):
     name=models.CharField(max_length=50,null=False)
     age=models.IntegerField()
@@ -35,4 +35,10 @@ class Person(models.Model):
     create_time=models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
+
         return self.name
+
+# 用户表
+class User(models.Model):
+    user = models.CharField(max_length=50)
+    password = models.CharField(max_length=50)
