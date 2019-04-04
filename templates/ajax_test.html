@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AJAX</title>
+</head>
+<body>
+<input type="text" id="i1">+<input type="text" id="i2">= <input type="text" id="i3"> <input type="button" value="AJAX提交" id="b1">
+<script src="/static/jquery-3.2.1.min.js"></script>
+<script>
+    $('#b1').on('click',function () {
+        {#alert('ok')#}
+
+        $.ajax({
+            url:/a_add/,
+            type:"post",
+            data:{"i1":$("#i1").val(),"i2":$("#i2").val()},
+      success:function (arg) {
+        $("#i3").val(arg);
+
+
+        }
+
+    })
+})
+
+</script>
+</body>
+</html>
