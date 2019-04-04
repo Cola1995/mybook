@@ -143,11 +143,11 @@ def book_list(request):
 
 
 def add_book(request):
-    '''
+    """
     #添加书籍
     :param request:
     :return:
-    '''
+    """
     if request.method == "POST":
         new_book_name = request.POST.get('book_name')
         new_plisher = request.POST.get('plisherq')
@@ -332,3 +332,16 @@ def logout(request):
     """
     request.session.flush()  # 删除当前的会话数据并删除会话的Cookie
     return redirect('/login/')
+
+
+def a_test(request):
+
+    return render(request, 'ajax_test.html')
+
+def a_add(request):
+    # print(request.POST.data)
+    i1 = int(request.POST.get("i1"))
+    i2 = int(request.POST.get("i2"))
+    ret = i1 + i2
+    return HttpResponse(ret)
+

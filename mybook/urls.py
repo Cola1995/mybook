@@ -52,6 +52,8 @@ urlpatterns = [
     url(r'^login/', views.login),
     url(r'^logout/', views.logout),
     url(r'^index/', views.index),
+    url(r'^a_test/', views.a_test),
+    url(r'^a_add/', views.a_add),
 
 
 
