@@ -363,3 +363,34 @@ def a_add(request):
     i2 = int(request.POST.get("i2"))
     ret = i1 + i2
     return HttpResponse(ret)
+
+
+def add_user(request):
+    """
+    # 添加用户
+    :return:
+    """
+    # a_url = request.get_full_path()  # 记录当前url
+    # print(a_url)
+    # next_url =
+    if request.method=="POST":
+        user = request.POST.get('user_name')
+        password = request.POST.get('password')
+        models.User.objects.create(user=user,password=password)
+        return redirect('/plisher_list')
+
+    return render(request,'add_user.html')
+
+def check_user(request):
+    """
+    # ajax检查用户是否被注册
+    :param request:
+    :return:
+    """
+    name = request.POST.get('name')
+    ret = models.User.objects.filter(user=name)
+    if ret:
+        msg = '用户已被注册'
+    else:
+        msg = '用户可以注册'
+    return HttpResponse(msg)

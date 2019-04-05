@@ -55,6 +55,8 @@ urlpatterns = [
     url(r'^a_test/', views.a_test),
     url(r'^a_add/', views.a_add),
     url(r'^delete_plisher1/', views.delete_plisher1),
+    url(r'^add_user/', views.add_user),
+    url(r'^check_user/', views.check_user),
 
 
 
