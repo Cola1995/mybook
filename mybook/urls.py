@@ -54,6 +54,7 @@ urlpatterns = [
     url(r'^index/', views.index),
     url(r'^a_test/', views.a_test),
     url(r'^a_add/', views.a_add),
+    url(r'^delete_plisher1/', views.delete_plisher1),
 
 
 

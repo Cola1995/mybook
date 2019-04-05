@@ -9,74 +9,79 @@ def check_login(func):
     :param func:
     :return:
     """
+
     def inner(request, *args, **kwargs):
         if request.session.get('is_login') == '1':  # 检测session登录成功
-            return func(request,*args, **kwargs)
-        else:                  # 如果session 未验证成功记录当前路径
+            return func(request, *args, **kwargs)
+        else:  # 如果session 未验证成功记录当前路径
             # 获取当前url
             next_url = request.path_info
             # print(next_url)
             return redirect("/login/?next={}".format(next_url))
             # return redirect('/login/')
+
     return inner
+
 
 # 展示所有出版社页面
 
 
 @check_login
 def plisher_list(request):
-
-    try:  #捕获传入页数为其他字符的情况
-        n = int(request.GET.get('page'))   #获取url传递页码数
+    try:  # 捕获传入页数为其他字符的情况
+        n = int(request.GET.get('page'))  # 获取url传递页码数
     except Exception:
         n = 1
 
-    start_num = (n-1)*10   # 第一条数据索引
-    end_num = n*10          # 最后一条数据索引
-    ret = models.Plisher.objects.all()[start_num:end_num]    # 切片
+    start_num = (n - 1) * 10  # 第一条数据索引
+    end_num = n * 10  # 最后一条数据索引
+    ret = models.Plisher.objects.all()[start_num:end_num]  # 切片
     totle = models.Plisher.objects.all().count()
-    a,b=divmod(totle,10)   # a代表页数 b代表总页数除10的余数
+    a, b = divmod(totle, 10)  # a代表页数 b代表总页数除10的余数
     if b:
-        a+=1
+        a += 1
     # print(a)
 
-    max_page = 11                # 最大显示页数
-    if a < max_page:    #判断显示页数小于max_page的情况
+    max_page = 11  # 最大显示页数
+    if a < max_page:  # 判断显示页数小于max_page的情况
         max_page = a
     page_index = max_page // 2
-    page_start =n-page_index
-    page_end =n+page_index
-    if page_start <= 1:     # 如果是当前页数是第一页，start从1开始
+    page_start = n - page_index
+    page_end = n + page_index
+    if page_start <= 1:  # 如果是当前页数是第一页，start从1开始
         page_start = 1
         page_end = max_page
     if page_end > a:
         page_end = a
-        page_start = a-max_page+1
+        page_start = a - max_page + 1
 
     html_list = []
     # 首页
     html_list.append('<li><a href="/plisher_list/?page=1" aria-label="Previous">首页</span></a></li>')
     # <<上一页
-    if n-1 < 1:  #如果当前页是第一页上一页页面不可点
-        html_list.append('<li class="disabled"><a href="#" aria-label="Previous">&laquo;</span></a></li>'.format(n-1))
+    if n - 1 < 1:  # 如果当前页是第一页上一页页面不可点
+        html_list.append('<li class="disabled"><a href="#" aria-label="Previous">&laquo;</span></a></li>'.format(n - 1))
     else:
-        html_list.append('<li ><a href="/plisher_list/?page={0}" aria-label="Previous">&laquo;</span></a></li>'.format(n-1))
-    for i in range(page_start, page_end+1):  # 生成页面li标签，由于前端页面不好控制循环故放在后端处理
-        if i == n:                           # 如果当前页选中，添加active类
+        html_list.append(
+            '<li ><a href="/plisher_list/?page={0}" aria-label="Previous">&laquo;</span></a></li>'.format(n - 1))
+    for i in range(page_start, page_end + 1):  # 生成页面li标签，由于前端页面不好控制循环故放在后端处理
+        if i == n:  # 如果当前页选中，添加active类
             html_list.append('<li class="active"><a href="?page={0}" >{0}</a></li>'.format(i))
         else:
             html_list.append('<li><a href="?page={0}" >{0}</a></li>'.format(i))
     # >>下一页
-    if n+1 > a:
-        html_list.append('<li class="disabled"><a href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>'.format(n+1))
+    if n + 1 > a:
+        html_list.append(
+            '<li class="disabled"><a href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>'.format(
+                n + 1))
     else:
         html_list.append('<li ><a href="/plisher_list/?page={0}"'
-                         ' aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>'.format(n+1))
+                         ' aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>'.format(n + 1))
     # 尾页
     html_list.append('<li><a href="/plisher_list/?page={}" aria-label="Previous">尾页</span></a></li>'.format(a))
     html_list = ''.join(html_list)  # 将html列表转成字符串
     # print(html_list)
-    return render(request, "plisher_list.html", {'plisher_list': ret, "html_list":html_list})
+    return render(request, "plisher_list.html", {'plisher_list': ret, "html_list": html_list})
 
 
 def add_plisher(request):
@@ -97,9 +102,19 @@ def delete_plisher(request):
         return HttpResponse('传入参数错误')
 
 
+# ajax 删除出版社
+def delete_plisher1(request):
+    del_id = request.POST.get('id', None)
+    if del_id:
+        models.Plisher.objects.get(id=del_id).delete()
+        return HttpResponse('删除成功')
+    else:
+        return HttpResponse('删除失败')
+
+
 
 # 删除出版社   #网址传参数的第二种写法
-def delete_plisher2(request,del_id):
+def delete_plisher2(request, del_id):
     # del_id = request.GET.get('id', None)
     if del_id:
         models.Plisher.objects.get(id=del_id).delete()
@@ -107,17 +122,19 @@ def delete_plisher2(request,del_id):
     else:
         return HttpResponse('传入参数错误')
 
+
 def edit_plisher(request):
     if request.method == "POST":  # 判断是那种提交方式
         e_id = request.POST.get('id')
         new_name = request.POST.get('plisher_name')
         edit_obj = models.Plisher.objects.get(id=e_id)  # 找到要修改的对象
-        edit_obj.plisher = new_name  # 修改出版社名字
+        edit_obj.name = new_name  # 修改出版社名字
         edit_obj.save()  # 提交到数据库
         return redirect("/plisher_list/?page=1")
     edit_id = request.GET.get('id')  # 将前一个页面的信息传递到当前页面
     edit_object = models.Plisher.objects.get(id=edit_id)
     return render(request, 'edit_plisher.html', {"plisher": edit_object})
+
 
 @check_login
 def book_list(request):
@@ -130,7 +147,7 @@ def book_list(request):
     page_num = request.GET.get("page")
     total_count = models.Book.objects.all().count()
     from utils import mypage
-    page_obj = mypage.Page(page_num,total_count,'/book_list/',10,11)
+    page_obj = mypage.Page(page_num, total_count, '/book_list/', 10, 11)
 
     ret = models.Book.objects.all()[page_obj.start:page_obj.end]
     # print(ret)
@@ -178,6 +195,7 @@ def edit_book(request):
     all_pl_obj = models.Plisher.objects.all()
     return render(request, 'edit_book.html', {"book_obj": ret, "pl_obj": all_pl_obj})
 
+
 @check_login
 def author_list(request):
     '''
@@ -200,21 +218,23 @@ def author_list(request):
     page_html = page_obj.page_html()
     return render(request, "author_list.html", {"author_list_obj": ret, "page_html": page_html})
 
+
 def add_author(request):
     '''
 
     :return:
     '''
 
-    if request.method=="POST":
-        new_name=request.POST.get('name')
-        new_books=request.POST.getlist('books')
-        new_author_obj=models.Author.objects.create(name=new_name) #创建对象
-        new_author_obj.book.set(new_books)  #设置书籍对应id
+    if request.method == "POST":
+        new_name = request.POST.get('name')
+        new_books = request.POST.getlist('books')
+        new_author_obj = models.Author.objects.create(name=new_name)  # 创建对象
+        new_author_obj.book.set(new_books)  # 设置书籍对应id
         return redirect('/author_list')
-    book_list_obj=models.Book.objects.all()
+    book_list_obj = models.Book.objects.all()
 
-    return render(request,'add_author.html',{"book_list_obj":book_list_obj})
+    return render(request, 'add_author.html', {"book_list_obj": book_list_obj})
+
 
 def del_author(request):
     '''
@@ -222,9 +242,10 @@ def del_author(request):
     :param request:
     :return:
     '''
-    del_id=request.GET.get('id')
+    del_id = request.GET.get('id')
     models.Author.objects.get(id=del_id).delete()
     return redirect('/author_list/')
+
 
 def edit_author(request):
     '''
@@ -232,30 +253,32 @@ def edit_author(request):
     :param request:
     :return:
     '''
-    if request.method=='POST':
-        id=request.POST.get('id')
-        new_a_name=request.POST.get('a_name')
-        new_books=request.POST.getlist('zp')
-        new_edit_obj=models.Author.objects.get(id=id)
-        new_edit_obj.name=new_a_name
+    if request.method == 'POST':
+        id = request.POST.get('id')
+        new_a_name = request.POST.get('a_name')
+        new_books = request.POST.getlist('zp')
+        new_edit_obj = models.Author.objects.get(id=id)
+        new_edit_obj.name = new_a_name
         new_edit_obj.book.set(new_books)
         new_edit_obj.save()
         return redirect('/author_list/')
-    edit_id=request.GET.get('id')
-    edit_obj=models.Author.objects.get(id=edit_id)
-    all_zp=models.Book.objects.all()
-    return render(request,'edit_author.html',{"edit_obj":edit_obj,"all_zp":all_zp})
+    edit_id = request.GET.get('id')
+    edit_obj = models.Author.objects.get(id=edit_id)
+    all_zp = models.Book.objects.all()
+    return render(request, 'edit_author.html', {"edit_obj": edit_obj, "all_zp": all_zp})
+
 
 def test(request):
-    name='Ma'
-    return render(request,'test.html',{"name":name})
+    name = 'Ma'
+    return render(request, 'test.html', {"name": name})
+
 
 def upload(request):
     if request.method == "POST":
         # 从请求的FILES中获取上传文件的文件名，file为页面上type=files类型input的name属性值
         filename = request.FILES["file"].name
         # 在项目目录下新建一个文件
-        with open(r"C:\Users\Administrator\PycharmProjects\mybook\static\pic\%s"%filename, "wb") as f:
+        with open(r"C:\Users\Administrator\PycharmProjects\mybook\static\pic\%s" % filename, "wb") as f:
             # 从上传的文件对象中一点一点读
             for chunk in request.FILES["file"].chunks():
                 # 写入本地文件
@@ -264,21 +287,20 @@ def upload(request):
 
 
 def json_test(request):
-    data={"name":"MA","age":"24"}
-    data1=["MA",12]
+    data = {"name": "MA", "age": "24"}
+    data1 = ["MA", 12]
 
     # import json                     #json格式的两种返回方式
     # data_str = json.dumps(data1)
     # return HttpResponse(data_str)
 
-
     from django.http import JsonResponse
-    return JsonResponse(data,safe=False)
+    return JsonResponse(data, safe=False)
 
 
-def title(request,year,month):
-    print("年：%s"%year)
-    print("月：%s"%month)
+def title(request, year, month):
+    print("年：%s" % year)
+    print("月：%s" % month)
     return HttpResponse("ok")
 
 
@@ -287,10 +309,7 @@ def home(request):
 
 
 def trans(request):
-    return render(request,'trans.html')
-
-
-
+    return render(request, 'trans.html')
 
 
 def login(request):
@@ -301,16 +320,16 @@ def login(request):
     """
     # print(request.get_full_path())
 
-    if request.method=="POST":
+    if request.method == "POST":
         user = request.POST.get('user')
         password = request.POST.get('password')
         next_url = request.GET.get('next')
-        ret = models.User.objects.filter(user=user,password=password)
+        ret = models.User.objects.filter(user=user, password=password)
         # print(user, password, ret, next_url)
         if ret:
             request.session['is_login'] = '1'  # 记录session
             request.session['user'] = user
-            request.session.set_expiry(60)    # 设置session 失效时间
+            request.session.set_expiry(600)  # 设置session 失效时间
             if next_url:
                 return redirect(next_url)
             else:
@@ -335,8 +354,8 @@ def logout(request):
 
 
 def a_test(request):
-
     return render(request, 'ajax_test.html')
+
 
 def a_add(request):
     # print(request.POST.data)
@@ -344,4 +363,3 @@ def a_add(request):
     i2 = int(request.POST.get("i2"))
     ret = i1 + i2
     return HttpResponse(ret)
-
