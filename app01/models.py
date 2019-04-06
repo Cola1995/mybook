@@ -40,5 +40,6 @@ class Person(models.Model):
 
 # 用户表
 class User(models.Model):
-    user = models.CharField(max_length=50)
-    password = models.CharField(max_length=50)
+    pwd = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
+    mobile = models.CharField(max_length=11, null=True)

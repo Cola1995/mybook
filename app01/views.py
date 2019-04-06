@@ -112,7 +112,6 @@ def delete_plisher1(request):
         return HttpResponse('删除失败')
 
 
-
 # 删除出版社   #网址传参数的第二种写法
 def delete_plisher2(request, del_id):
     # del_id = request.GET.get('id', None)
@@ -319,14 +318,17 @@ def login(request):
     :return:
     """
     # print(request.get_full_path())
-
+    error = ''
     if request.method == "POST":
         user = request.POST.get('user')
         password = request.POST.get('password')
         next_url = request.GET.get('next')
-        ret = models.User.objects.filter(user=user, password=password)
+        # print(user,password)
+        ret = models.User.objects.filter(name=user,pwd=password)
+        # print(ret)
         # print(user, password, ret, next_url)
         if ret:
+
             request.session['is_login'] = '1'  # 记录session
             request.session['user'] = user
             request.session.set_expiry(600)  # 设置session 失效时间
@@ -335,7 +337,9 @@ def login(request):
             else:
 
                 return redirect('/book_list/')
-    return render(request, 'login.html')
+        else:
+            error = '用户名或密码错误！'
+    return render(request, 'login.html',{'error':error})
 
 
 @check_login
@@ -373,13 +377,14 @@ def add_user(request):
     # a_url = request.get_full_path()  # 记录当前url
     # print(a_url)
     # next_url =
-    if request.method=="POST":
+    if request.method == "POST":
         user = request.POST.get('user_name')
         password = request.POST.get('password')
-        models.User.objects.create(user=user,password=password)
+        models.User.objects.create(user=user, password=password)
         return redirect('/plisher_list')
 
-    return render(request,'add_user.html')
+    return render(request, 'add_user.html')
+
 
 def check_user(request):
     """
@@ -394,3 +399,98 @@ def check_user(request):
     else:
         msg = '用户可以注册'
     return HttpResponse(msg)
+
+
+# django内置form
+
+
+from django import forms
+from django.forms import widgets
+from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
+
+
+class RegForm(forms.Form):
+    name = forms.CharField(label='用户名',
+                           error_messages={
+                               "required": "该字段不能为空",
+                           },
+                           widget=forms.widgets.TextInput(attrs={'class': 'form-control'}, )  # 添加样式
+                           )
+    pwd = forms.CharField(label='密码'
+                          , min_length=6,
+                          max_length=10,
+                          widget=widgets.PasswordInput(attrs={"class": "form-control"}, render_value=True),
+                          error_messages={
+                              "min_length": "密码不能少于6位！",
+                              "max_length": "密码最长10位！",
+                              "required": "该字段不能为空",
+                              "invalid": "格式错误",
+                          })
+    re_pwd = forms.CharField(label='密码'
+                             , min_length=6,
+                             max_length=10,
+                             widget=widgets.PasswordInput(attrs={"class": "form-control"}, render_value=True),
+                             error_messages={
+                                 "min_length": "密码不能少于6位！",
+                                 "max_length": "密码最长10位！",
+                                 "required": "该字段不能为空",
+                             })
+
+    mobile = forms.CharField(
+        label="手机",
+        # 自己定制校验规则
+        validators=[
+            RegexValidator(r'^[0-9]+$', '手机号必须是数字'),
+            RegexValidator(r'^1[3-9][0-9]{9}$', '手机格式有误')
+        ],
+        widget=widgets.TextInput(attrs={"class": "form-control"}),
+
+        error_messages={
+            "required": "该字段不能为空",
+        }
+    )
+
+
+
+    def clean_name(self):
+        """
+        # 重写方法判断是用户名中敏感词汇
+        :return:
+        """
+        value = self.cleaned_data.get("name")
+        if "傻逼" in value:
+            raise ValidationError("请文明用语！")
+        return value
+
+# 重写父类的clean方法,注意必须放在定义是类里面
+    def clean(self):
+        """
+        # 检验两次密码是否一致函数
+        :param self:
+        :return:
+        """
+        # 此时 通过检验的字段的数据都保存在 self.cleaned_data
+        pwd = self.cleaned_data.get("pwd")
+        re_pwd = self.cleaned_data.get("re_pwd")
+        # print(pwd,re_pwd)
+        if pwd != re_pwd:
+            self.add_error("re_pwd", ValidationError("两次密码不一致"))
+            raise ValidationError("两次密码不一致")
+        return self.cleaned_data
+
+
+def regiter(request):
+    form_obj = RegForm()    # 实力化form对象
+    if request.method == "POST":
+        form_obj = RegForm(request.POST)  # form 对象重新赋值
+        if form_obj.is_valid():  # 校验通过
+            del form_obj.cleaned_data['re_pwd']      # 将验证过的数据字典删除重复密码字段
+            print(form_obj.cleaned_data)
+            models.User.objects.create(**form_obj.cleaned_data) # 数据拆分存入数据库
+            return redirect('/plisher_list/')
+    return render(request, 'add_user2.html', {'form_obj': form_obj})
+
+
+
+
