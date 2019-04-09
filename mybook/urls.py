@@ -57,7 +57,6 @@ urlpatterns = [
     url(r'^delete_plisher1/', views.delete_plisher1),
     url(r'^add_user/', views.regiter),
     url(r'^check_user/', views.check_user),
-
-
-
+    url(r'^find_book/', views.find_book),
+    url(r'^edit_book2/', views.edit_book2),
 ]

@@ -173,6 +173,68 @@ def add_book(request):
     return render(request, "add_book.html", {"plisher_list": ret})
 
 
+def find_book(request):
+    """
+    # ajax返回数据
+    :param request:
+    :return:
+    """
+    if request.method =="POST":
+        id = request.POST.get("id")
+
+        names = models.Book.objects.filter(id=id).values('p__name','title','id','p_id')
+        all_pl = models.Plisher.objects.all().values('name','id')
+        # print(all_pl)
+
+        # print("@@@@@@@@@@@@@@@@@@@@@")
+
+        p_list = []
+
+        for p in all_pl:
+            p_dict = {}
+            p_dict["id"] = p["id"]
+            p_dict["name"] = p["name"]
+            p_list.append(p_dict)
+        # print(p_list)
+        json_list = []
+        for name in names:
+            # print(name["p__name"])
+            json_dict = {}
+            json_dict["name"] = name["p__name"]
+            json_dict["title"] = name["title"]
+            json_dict["id"] = name["id"]
+            json_dict["p_id"] = name["p_id"]
+            # {"name":"清华大学出版社"}
+
+            json_list.append(json_dict)
+        json_dict['plisher'] = p_list
+
+            #[{"name":"清华大学出版社","plisher":[{"id":1,"name":"aaaa"},"bbb"]}]
+        import json
+        json_data = json.dumps(json_list)
+        # print(json_data)
+    return HttpResponse(json_data)
+
+def edit_book2(request):
+    '''
+    #编辑书籍2,ajax修改版
+    :param request:
+    :return:
+    '''
+    if request.method == "POST":
+        new_id = request.POST.get('ss')
+
+        new_book = request.POST.get('recipient-name')
+        new_pl = request.POST.get('p_se')
+        print(new_id,new_book,new_pl)
+        res = models.Book.objects.get(id=new_id)  # 获取要修改的对象
+        res.title = new_book  # 替换titie值
+        res.p_id = new_pl  # 替换option_id
+        res.save()
+        return redirect('/book_list/')
+    return render(request, 'edit_book.html')
+
+
 def edit_book(request):
     '''
     #编辑书籍

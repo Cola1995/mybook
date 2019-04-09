@@ -50,7 +50,7 @@
                 <li><a href="/logout/">注销</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false">{{ request.session.user   }} <span class="caret"></span></a>
+                       aria-expanded="false">{{ request.session.user }} <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="#">添加用户</a></li>
                         <li><a href="#">注销登录</a></li>
@@ -75,8 +75,8 @@
                 <a href="/plisher_list/?page=1" class="list-group-item ">出版社列表</a>
                 <a href="/book_list/" class="list-group-item active">书籍列表</a>
                 <a href="/author_list/" class="list-group-item">作者信息</a>
-{#                <a href="#" class="list-group-item">Porta ac consectetur ac</a>#}
-{#                <a href="#" class="list-group-item">Vestibulum at eros</a>#}
+                {#                <a href="#" class="list-group-item">Porta ac consectetur ac</a>#}
+                {#                <a href="#" class="list-group-item">Vestibulum at eros</a>#}
             </div>
         </div>
     </div>
@@ -113,7 +113,7 @@
                 <div class="row">
                     <div class="col-md-12" style="margin-top: 10px">
                         {#                        <a href="/add_plisher/">添加出版社信息</a>#}
-{#                        <a href="/add_book/">添加书籍</a>#}
+                        {#                        <a href="/add_book/">添加书籍</a>#}
                         <table class="table table-hover table-bordered">
                             <thead>
                             <tr>
@@ -131,7 +131,60 @@
                                     <td>{{ book.title }}</td>
                                     <td>{{ book.p.name }}</td>  <!--外键取值为对象-->
                                     <td>{{ book.price }}</td>
-                                    <td><a class="btn btn-success" href="/edit_book/?id={{ book.id }}">编辑</a></td>
+                                    <td><a class="btn btn-success" href="/edit_book/?id={{ book.id }}">编辑</a>
+                                        {# 编辑按钮#}
+                                        <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                data-target="#exampleModal" data-whatever="{{ book.id }}">编辑2
+                                        </button>
+                                        {#   弹出模态框#}
+                                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                                             aria-labelledby="exampleModalLabel">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close"><span
+                                                                aria-hidden="true">&times;</span></button>
+                                                        <h4 class="modal-title" id="exampleModalLabel">编辑图书</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form action="/edit_book2/" method="post" id="f1">
+                                                            <input type="hidden"  name="ss" id="ss" >
+                                                            <div class="form-group">
+                                                                <label for="recipient-name"
+                                                                       class="control-label">书名</label>
+                                                                <input type="text" class="form-control"
+                                                                       id="recipient-name" name="recipient-name">
+                                                            </div>
+                                                            {#                                                            <div class="form-group">#}
+                                                            {#                                                                <label for="message-text"#}
+                                                            {#                                                                       class="control-label">出版社</label>#}
+                                                            {#                                                                <textarea class="form-control"#}
+                                                            {#                                                                          id="message-text"></textarea>#}
+                                                            {#                                                            </div>#}
+                                                            <label for="plisher"
+                                                                   class="control-label">出版社</label>
+                                                            <select class="form-control" id="p_se" name="p_se">
+                                                                <option>1</option>
+                                                                <option>2</option>
+                                                                <option>3</option>
+                                                                <option>4</option>
+                                                                <option value="555">5</option>
+                                                            </select>
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default"
+                                                                data-dismiss="modal">Close
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary" id="b1">Send message
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </td>
                                 </tr>
                             {% endfor %}
 
@@ -144,21 +197,21 @@
                     <div class="col-md-12">
                         <nav aria-label="Page navigation">
                             <ul class="pagination pull-right">
-{#                                <li>#}
-{#                                    <a href="#" aria-label="Previous">#}
-{#                                        <span aria-hidden="true">&laquo;</span>#}
-{#                                    </a>#}
-{#                                </li>#}
-{#                                <li><a href="#">1</a></li>#}
-{#                                <li><a href="#">2</a></li>#}
-{#                                <li><a href="#">3</a></li>#}
-{#                                <li><a href="#">4</a></li>#}
-{#                                <li><a href="#">5</a></li>#}
-{#                                <li>#}
-{#                                    <a href="#" aria-label="Next">#}
-{#                                        <span aria-hidden="true">&raquo;</span>#}
-{#                                    </a>#}
-{#                                </li>#}
+                                {#                                <li>#}
+                                {#                                    <a href="#" aria-label="Previous">#}
+                                {#                                        <span aria-hidden="true">&laquo;</span>#}
+                                {#                                    </a>#}
+                                {#                                </li>#}
+                                {#                                <li><a href="#">1</a></li>#}
+                                {#                                <li><a href="#">2</a></li>#}
+                                {#                                <li><a href="#">3</a></li>#}
+                                {#                                <li><a href="#">4</a></li>#}
+                                {#                                <li><a href="#">5</a></li>#}
+                                {#                                <li>#}
+                                {#                                    <a href="#" aria-label="Next">#}
+                                {#                                        <span aria-hidden="true">&raquo;</span>#}
+                                {#                                    </a>#}
+                                {#                                </li>#}
                                 {{ page_html|safe }}
                             </ul>
                         </nav>
@@ -171,9 +224,64 @@
     </div>
     <!--面板结束-->
 </div>
-
-
 <script src="/static/jquery-3.2.1.min.js"></script>
 <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+<script>
+    $('#exampleModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var recipient = button.data('whatever') // Extract info from data-* attributes
+        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+
+        // ajax 查询请求当前编辑数据
+        var selEle = $("#p_se")   // 获取select
+        selEle.empty()           // 删除select内所有option
+        $.ajax({
+            url: "/find_book/",
+            type: "post",
+            data: {"id": recipient},
+            success: function (args) {
+                $('#ss').val(recipient)
+
+
+                op = JSON.parse(args);
+                {#oo = op[0].plisher#}
+                {#alert(typeof recipient)#}
+                {#alert(op[0].plisher.length)#}
+                {#op = JSON.stringify(args)#}
+                {#alert(op[0].name)#}
+                {#alert(args.name)#}
+                // 循环创建每一个option并赋值
+                for (var i = 0;i < op[0].plisher.length;i++){
+
+                    var optionEle = document.createElement('option');
+                    {#$(optionEle).val(op[0].plisher[i])#}
+                    $(optionEle).val(op[0].plisher[i].id)
+                    $(optionEle).text(op[0].plisher[i].name);
+                    $(selEle).append(optionEle)
+                }
+                {#alert(recipient)#}
+                selEle.val(op[0].p_id)
+                modal.find('.modal-body input').eq(1).val(op[0].title)  // 书名输入框赋值
+                modal.find('.modal-body input').eq(0).val(recipient)  // 书名输入框赋值
+            }
+        });
+
+        var modal = $(this)
+        {#alert('ok')#}
+        modal.find('.modal-title').text('New message to ' + recipient)
+        {#modal.find('.modal-body input ').val(recipient)#}
+        {#modal.find('.modal-body input').val(recipient)#}
+
+        {#alert(recipient)#}
+
+    })
+
+    $("#b1").on('click',function(){
+
+        $("#f1").submit()
+    })
+
+</script>
 </body>
 </html>
